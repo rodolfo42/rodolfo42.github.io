@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Rodolfo Ferreira]]></title>
-  <link href="http://rodolfo42.github.io/atom.xml" rel="self"/>
-  <link href="http://rodolfo42.github.io/"/>
-  <updated>2013-05-07T02:19:46-03:00</updated>
-  <id>http://rodolfo42.github.io/</id>
+  <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
+  <link href="http://rodolfoferreira.com.br/"/>
+  <updated>2013-05-07T02:22:38-03:00</updated>
+  <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
     <email><![CDATA[rodolfo@rodolfoferreira.com.br]]></email>
@@ -15,12 +15,12 @@
   
   <entry>
     <title type="html"><![CDATA[Real time event notifications for web apps - Part 2]]></title>
-    <link href="http://rodolfo42.github.io/2013/02/20/real-time-event-notifications-for-web-apps-part-2/"/>
+    <link href="http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/"/>
     <updated>2013-02-20T00:00:00-03:00</updated>
-    <id>http://rodolfo42.github.io/2013/02/20/real-time-event-notifications-for-web-apps-part-2</id>
+    <id>http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2</id>
     <content type="html"><![CDATA[<h2>Overview</h2>
 
-<p>So, in my <a href="http://rodolfo42.github.io/2013/02/14/real-time-event-notifications-for-web-apps-part-1/">previous post</a>, I introduced the idea of a solution for realtime event messaging using a Pub/Sub implementation and Chromium&#8217;s Desktop Notifications API.</p>
+<p>So, in my <a href="http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1/">previous post</a>, I introduced the idea of a solution for realtime event messaging using a Pub/Sub implementation and Chromium&#8217;s Desktop Notifications API.</p>
 
 <p>The architectural view presented there only covers the big picture. Now let&#8217;s get into details technically.</p>
 
@@ -175,7 +175,7 @@ var broadcastEvent = function(eventName, data, senderSocket) {
 
 <p>Now, we have a <code>onlineSockets</code> variable, which is an instance of <code>SocketMap</code>. This is a data structure created to hold all active sockets, but in a very specific manner, in order to solve the problem of having multiple tabs open on a page of your your app. The basic scheme is illustrated below;</p>
 
-<p><img src="http://rodolfo42.github.io/uploads/arch2.png" alt="Diagram describing the SocketMap scheme" /></p>
+<p><img src="http://rodolfoferreira.com.br/uploads/arch2.png" alt="Diagram describing the SocketMap scheme" /></p>
 
 <p>The squares A, B and C demonstrate the open tabs in the browser, each of those having one open WebSocket listening to events to be published by the event server. Each socket, as soon as it&#8217;s connected, sends a <code>register</code> event passing a <em>hash</em> which is unique across all open browsers/sessions, but <strong>shared between tabs</strong> (this can be, for instance, your session ID). The reference to the socket then gets stored in the <code>SocketMap</code>, which creates &#8220;stacks&#8221; keyed by each new hash it receives.</p>
 
@@ -272,9 +272,9 @@ webSocket.on('connect', function() {
   
   <entry>
     <title type="html"><![CDATA[Real time event notifications for web apps - Part 1]]></title>
-    <link href="http://rodolfo42.github.io/2013/02/14/real-time-event-notifications-for-web-apps-part-1/"/>
+    <link href="http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1/"/>
     <updated>2013-02-14T00:00:00-03:00</updated>
-    <id>http://rodolfo42.github.io/2013/02/14/real-time-event-notifications-for-web-apps-part-1</id>
+    <id>http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1</id>
     <content type="html"><![CDATA[<h2>Overview</h2>
 
 <p>I thought I would share an interesting solution I came up with for notifying active users of a web application about system events in real time.
@@ -301,7 +301,7 @@ I&#8217;ll just use the following scenario:</p>
 
 <p>Basically, an implementation of the old <a href="http://c2.com/cgi/wiki?PublishSubscribeModel" title="C2 Wiki on Pub/Sub Model">Publish-Subscribe model</a>. The app doesn&#8217;t care if there are any subscribers for the event, and the subscribers don&#8217;t care if there are any publishers. To illustrate:</p>
 
-<p><img src="http://rodolfo42.github.io/uploads/arch1.png" alt="Diagram describing the relations between the app, event server and the browser clients" /></p>
+<p><img src="http://rodolfoferreira.com.br/uploads/arch1.png" alt="Diagram describing the relations between the app, event server and the browser clients" /></p>
 
 <p>Pretty straightforward.</p>
 
@@ -309,15 +309,15 @@ I&#8217;ll just use the following scenario:</p>
 
 <p>The event server&#8217;s response to the app would only indicate that the server received the event data successfully. Whether it has tons of clients to notify or none, the app will still get the same response time, allowing it to scale well. I have found that this approach also decreases coupling and thus becomes much more modular and mantainable.</p>
 
-<p>In the <a href="http://rodolfo42.github.io/2013/02/20/real-time-event-notifications-for-web-apps-part-2/">second part</a> of this post, I will share the actual code I wrote for this solution and the technologies and languages used.</p>
+<p>In the <a href="http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/">second part</a> of this post, I will share the actual code I wrote for this solution and the technologies and languages used.</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Google Guice to manage environment profiles]]></title>
-    <link href="http://rodolfo42.github.io/2012/09/09/using-google-guice-to-manage-environment-profiles/"/>
+    <link href="http://rodolfoferreira.com.br/2012/09/09/using-google-guice-to-manage-environment-profiles/"/>
     <updated>2012-09-09T00:00:00-03:00</updated>
-    <id>http://rodolfo42.github.io/2012/09/09/using-google-guice-to-manage-environment-profiles</id>
+    <id>http://rodolfoferreira.com.br/2012/09/09/using-google-guice-to-manage-environment-profiles</id>
     <content type="html"><![CDATA[<p>A few days ago, I started studying <a href="http://www.mybatis.org/">MyBatis</a>, a persistence framework for Java. Along its <a href="http://www.mybatis.org/core/java-api.html#sqlSessions">XML configuration settings</a>, there is a <code>&lt;environment&gt;</code> section available for specifying different environment profiles (development, test, production and the like). Basically, it looks like this:</p>
 
 <div>
