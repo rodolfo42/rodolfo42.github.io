@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Rodolfo Ferreira]]></title>
+  <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
+  <link href="http://rodolfoferreira.com.br/"/>
+  <updated>2013-05-07T02:16:03-03:00</updated>
+  <id>http://rodolfoferreira.com.br/</id>
+  <author>
+    <name><![CDATA[Rodolfo Ferreira]]></name>
+    <email><![CDATA[rodolfo@rodolfoferreira.com.br]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Real time event notifications for web apps - Part 2]]></title>
+    <link href="http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/"/>
+    <updated>2013-02-20T00:00:00-03:00</updated>
+    <id>http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2</id>
+    <content type="html"><![CDATA[<h2>Overview</h2>
+
+<p>So, in my <a href="http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1/">previous post</a>, I introduced the idea of a solution for realtime event messaging using a Pub/Sub implementation and Chromium&#8217;s Desktop Notifications API.</p>
+
+<p>The architectural view presented there only covers the big picture. Now let&#8217;s get into details technically.</p>
+
+<p>In summary, the solution presented here will provide a organized way of having a event server available for publishing events to active users. This is a web-based browser-only solution, as it uses WebSockets and the Socket.IO library.</p>
+
+<blockquote><p><strong>Note:</strong> The notification pop-ups are implemented using Desktop Notifications in order to have the notifications appear outside the tab, even when the browser is minimized. This only works in Chrome and Safari right now. If you really need this outside Chrome, you can use an <a href="https://addons.mozilla.org/en-us/firefox/addon/html-notifications/">extension for Firefox</a>, but other browsers don&#8217;t have a similar solution as of today.</p></blockquote>
+
+<!--more-->
+
+
+<h2>The server</h2>
+
+<p>In order for the communication between the event server, app and it&#8217;s subscribers to be <strong>asynchronous</strong> as mentioned, I chose to use <a href="http://nodejs.org/" title="Joyent's Node.js official website">Node.js</a> from Joyent, due to it&#8217;s non-blocking, evented I/O model. It leverages system&#8217;s resources more efficiently when holding many concurrent connections at once, and it allows us to do concurrent network programming in a very straightforward manner. It works for me, so it&#8217;s really <em>not</em> because it&#8217;s fancy or cool.</p>
+
+<p>We will also use the <a href="http://expressjs.com/" title="Express framework website">Express</a> framework, since it simplifies the task of routing, parsing requests and sending responses.</p>
+
+<h2>The client and the communication</h2>
+
+<p>As we&#8217;re talking Javascript, the data interchange format used by this particular case will be JSON.</p>
+
+<p>And for the core &#8220;realtime behaviour&#8221; of this scheme, we&#8217;ll want to keep a permanent connection between the event server and it&#8217;s subscribers. As they&#8217;re nothing but browser clients, the choice is made towards <a href="http://socket.io/" title="Socket.IO website">Socket.IO</a>, a realtime library that provides various means to enjoy Comet-style connection between the browser and the remote server, listening for and emitting (pushing) events.</p>
+
+<h2>The code</h2>
+
+<p>We&#8217;ll have javascript code on both server and client sides.</p>
+
+<h3>Server-side</h3>
+
+<p>We begin by coding an <code>app.js</code> in a clean working directory:</p>
+
+<div>
+  <pre><code class='js'>var application_root = __dirname,
+    path = require(&quot;path&quot;),
+    fs = require(&quot;fs&quot;),
+    http = require('http');</code></pre>
+</div>
+
+
+<p>Now, we will configure the express framework, for exposing our API for publishing events.</p>
+
+<div>
+  <pre><code class='js'>// port the server will listen on
+var listenPort = 3000;
+
+var express = require(&quot;express&quot;);
+var app = express();
+
+var server = http.createServer(app);
+var io = require('socket.io').listen(server, {log: false});
+
+app.configure(function () {
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(express.errorHandler({ dumpExceptions:true, showStack:true }));
+    app.use(express.static(__dirname + '/public'));
+});</code></pre>
+</div>
+
+
+<p>We will use <a href="https://github.com/nomiddlename/log4js-node" title="log4js on github">log4js</a> to get a cleaner log output for debugging and monitoring purposes.</p>
+
+<div>
+  <pre><code class='js'>var log4js = require('log4js')
+
+log4js.configure({
+    appenders: [
+        {type: &quot;console&quot;}
+    ],
+    replaceConsole: true
+});
+
+var log = log4js.getLogger();;</code></pre>
+</div>
+
+
+<p>Declare your dependencies and project info in a <code>package.json</code> file in the root:</p>
+
+<div>
+  <pre><code class='js'>{
+    &quot;name&quot;:&quot;event-server&quot;,
+    &quot;version&quot;:&quot;0.0.1&quot;,
+    &quot;private&quot;:true,
+    &quot;scripts&quot;:{
+        &quot;start&quot;:&quot;node app&quot;
+    },
+    &quot;dependencies&quot;:{
+        &quot;express&quot;:&quot;3.1.0&quot;,
+        &quot;socket.io&quot;: &quot;0.9.13&quot;,
+        &quot;log4js&quot;: &quot;0.5.6&quot;
+    }
+}</code></pre>
+</div>
+
+
+<p>After this setup, we can begin defining our API endpoints. We will first create a POST route that receives event data and publishes it. This can be anything you want, but for now let&#8217;s assume we only need a <code>title</code>, <code>message</code> and <code>url</code> for the notification to be displayed. The data will be received by our server in a JSON string in the HTTP request body.</p>
+
+<blockquote><p><strong>Note:</strong> Express <a href="http://expressjs.com/api.html#bodyParser" title="bodyParser() API reference">also supports</a> urlencoded and multipart for parsing the request body, when using <code>bodyParser()</code> as above, but we will focus on JSON for brevity</p></blockquote>
+
+<p>Let&#8217;s create this route as <code>/events</code>:</p>
+
+<div>
+  <pre><code class='js'>app.post('/events', function (req, res) {
+    var data = req.body;
+    log.info('POST /events');
+
+    // verifies the data is indeed valid
+    // since Express automatically parses JSON body, it should be an object and non-empty
+    if(typeof data == 'object' &amp;&amp; data != {}) {
+        log.debug(JSON.stringify(data));
+        res.send({status: &quot;success&quot;}); // note the asynchronicity
+        log.debug('returned success status');
+
+        // notify clients after we are done responding
+        setTimeout(function(){
+            log.debug('pushing updates to subscribers..');
+            broadcastEvent('newMessage', data);
+        }, 1);
+    } else { // express couldn't parse the body
+        log.error('error parsing the request body');
+        log.error(data);
+    }
+});</code></pre>
+</div>
+
+
+<p>Notice that are not defining/validating any specific structure for the event data, but you can easily do that here, and just return a different status in case of an error.</p>
+
+<p>The <code>broadcastEvent</code> function is self-explaining - it&#8217;s responsible for broadcasting the event to all registered listeners of the event server. So let&#8217;s look at it&#8217;s code:</p>
+
+<div>
+  <pre><code class='js'>var onlineSockets = new SocketMap();
+
+// emit events to the top sockets of all slots, excluding the `senderSocket`
+var broadcastEvent = function(eventName, data, senderSocket) {
+    senderSocket = senderSocket || false;
+    var allSockets = onlineSockets.getList(), currSocket, qtyNotified = 0;
+    onlineSockets.debug();
+    for(var i=0; i &lt; allSockets.length; i++) {
+        currSocket = allSockets[i];
+        if(senderSocket &amp;&amp; senderSocket == currSocket) {
+            continue;
+        }
+        if(currSocket != null) {
+            qtyNotified++;
+            currSocket.emit(eventName, data);
+        }
+    }
+    log.info(qtyNotified + ' sockets where notified');
+};</code></pre>
+</div>
+
+
+<p>Now, we have a <code>onlineSockets</code> variable, which is an instance of <code>SocketMap</code>. This is a data structure created to hold all active sockets, but in a very specific manner, in order to solve the problem of having multiple tabs open on a page of your your app. The basic scheme is illustrated below;</p>
+
+<p><img src="http://rodolfoferreira.com.br/uploads/arch2.png" alt="Diagram describing the SocketMap scheme" /></p>
+
+<p>The squares A, B and C demonstrate the open tabs in the browser, each of those having one open WebSocket listening to events to be published by the event server. Each socket, as soon as it&#8217;s connected, sends a <code>register</code> event passing a <em>hash</em> which is unique across all open browsers/sessions, but <strong>shared between tabs</strong> (this can be, for instance, your session ID). The reference to the socket then gets stored in the <code>SocketMap</code>, which creates &#8220;stacks&#8221; keyed by each new hash it receives.</p>
+
+<p>So, when the socket registers with an existing hash:</p>
+
+<ul>
+<li>the new socket gets pushed to the stack of open sockets for that hash</li>
+<li>it becomes the one active socket for that hash</li>
+</ul>
+
+
+<p>As soon as a tab is closed, it&#8217;s socket loses connection to the server, and is automatically removed from the stack, whichever position it was in. If it was the last one (the active one), it&#8217;s removed and the socket below it becomes the active socket for that hash.</p>
+
+<h3>Client-side</h3>
+
+<p>In the client side, all we need to do is to insert the same script in all desired pages of the app. This script must:</p>
+
+<ul>
+<li>be able to access/generate a unique hash, shared between the tabs (cookie value for the session ID)</li>
+<li>register an socket for that tab, using said hash</li>
+<li>receive notifications and notify the user using Desktop Notifications API</li>
+</ul>
+
+
+<p>So in order to get the hash, you can use a js library like <a href="https://github.com/carhartl/jquery-cookie">jQuery.cookie</a> to get the cookie that represents your session ID. In this particular case, I&#8217;ll just generate a random hash and register it as a cookie, to simulate a real app&#8217;s session ID:</p>
+
+<div>
+  <pre><code class='js'>// your app cookie key
+// eg. PHPSESSID or JSESSIONID
+var COOKIE_KEY = &quot;MYCOOKIEKEY&quot;;
+
+// just for test purposes, create a cookie with an random number
+// inspired by http://stackoverflow.com/a/2117523
+if(typeof hash == 'undefined') {
+    hash = 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+        var v = Math.random()*16|0;
+        return v.toString(16);
+    });
+    $.cookie(COOKIE_KEY, hash, {expires : 3600});
+}</code></pre>
+</div>
+
+
+<p>To register the socket with the hash on the server, as we&#8217;re using Socket.IO, we need to bind a callback to the <code>connect</code> event, which is fired right after the socket connects to the server:</p>
+
+<div>
+  <pre><code class='js'>var webSocket = io.connect('http://event-server.example.com/');
+
+webSocket.on('connect', function() {
+    var data = {&quot;hash&quot;: hash};
+    webSocket.emit('register', data);
+});</code></pre>
+</div>
+
+
+<p>And finally, use the <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification" title="Chromium Desktop Notification Spec">Desktop Notifications API</a> (Chrome/Safari only, FF via extension) to notify the user of events published by the event server:</p>
+
+<div>
+  <pre><code class='js'>webSocket.on('newMessage', function(payload) {
+    // sanitize event attributes
+    var title = payload.title;
+    var message = payload.message;
+    
+    // creates a DesktopNotification without the icon
+    var n = (webkitNotifications.createNotification(&quot;&quot;, title, message));
+    
+    // when clicked, the notification should close and the user redirected to the URL, if provided
+    n.onclick = function(e) {
+        if(payload.url) {
+            // open url in new tab
+            window.open(payload.url, '_blank');
+        } else {
+            // otherwise, bring the tab into focus
+            window.focus();
+        }
+        // closes the notification popup
+        this.close();
+    };
+    
+    n.show(); // important - display the notification!
+});</code></pre>
+</div>
+
+
+<p>In the code above, I added support for a <code>url</code> attribute, which, if present the incoming event data, loads the specified url when the notification is clicked.</p>
+
+<h2>Bottomline</h2>
+
+<p>What&#8217;s briliant about this solution, is that, in order for the user not to be harassed by a lot of notifications for each open tab, which can be 10, 20 or a 100 tabs, the server only publishes events to the <em>active</em> sockets (represented by the continuous black line), which are basically the last sockets to register for each hash.</p>
+
+<p>The source code for this entire solution is available in Github: <a href="https://github.com/rodolfo42/event-notifications">rodolfo42/event-notifications</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Real time event notifications for web apps - Part 1]]></title>
+    <link href="http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1/"/>
+    <updated>2013-02-14T00:00:00-03:00</updated>
+    <id>http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1</id>
+    <content type="html"><![CDATA[<h2>Overview</h2>
+
+<p>I thought I would share an interesting solution I came up with for notifying active users of a web application about system events in real time.
+I&#8217;ll just use the following scenario:</p>
+
+<blockquote><p>an e-commerce app which needs to notify <strong>active</strong> back-office administrators in the instant when an order has been placed or when an order&#8217;s items have just been successfully delivered to their destination.</p></blockquote>
+
+<p>Note the emphasis on <strong>active</strong> - what I mean is: currently logged in and active users, with at least one tab open in any page of the app. An on-screen, desktop notification is appropriate, and with Chromium&#8217;s <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification" title="Chromium Desktop Notification Spec">Desktop Notifications API</a> it&#8217;s not only possible to notify the user when the tab is active, but even when it&#8217;s not (and even when the whole browser itself is minimized).</p>
+
+<p>Of course you could have e-mail alerts, but that could end up cluttering every inbox with unnecessary and outdated alerts, once the order could have already been acted upon long before these alerts would be checked.</p>
+
+<!--more-->
+
+
+<h2>Architecture</h2>
+
+<p>So in order to make it <em>actually</em> real time, the idea is to have an <em>event server</em> which is responsible for only two things:</p>
+
+<ul>
+<li>keeping a list of active listeners for events (subscribers)</li>
+<li>react upon receiving event data from the app (publisher), by pushing it to all active listeners, using a common data interchange format</li>
+</ul>
+
+
+<p>Basically, an implementation of the old <a href="http://c2.com/cgi/wiki?PublishSubscribeModel" title="C2 Wiki on Pub/Sub Model">Publish-Subscribe model</a>. The app doesn&#8217;t care if there are any subscribers for the event, and the subscribers don&#8217;t care if there are any publishers. To illustrate:</p>
+
+<p><img src="http://rodolfoferreira.com.br/uploads/arch1.png" alt="Diagram describing the relations between the app, event server and the browser clients" /></p>
+
+<p>Pretty straightforward.</p>
+
+<p>The communication between the app and the server has an important attribute: the server doesn&#8217;t wait until it has finished notifying all the subscribers, in order to send a response back to the app. It&#8217;s <strong>asynchronous</strong>, meaning you could have 1000&#8217;s of clients connected, and still the event server would respond quickly to the app. Non-blocking communication like that it&#8217;s what makes it able to handle high ammounts of traffic.</p>
+
+<p>The event server&#8217;s response to the app would only indicate that the server received the event data successfully. Whether it has tons of clients to notify or none, the app will still get the same response time, allowing it to scale well. I have found that this approach also decreases coupling and thus becomes much more modular and mantainable.</p>
+
+<p>In the <a href="http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/">second part</a> of this post, I will share the actual code I wrote for this solution and the technologies and languages used.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Google Guice to manage environment profiles]]></title>
+    <link href="http://rodolfoferreira.com.br/2012/09/09/using-google-guice-to-manage-environment-profiles/"/>
+    <updated>2012-09-09T00:00:00-03:00</updated>
+    <id>http://rodolfoferreira.com.br/2012/09/09/using-google-guice-to-manage-environment-profiles</id>
+    <content type="html"><![CDATA[<p>A few days ago, I started studying <a href="http://www.mybatis.org/">MyBatis</a>, a persistence framework for Java. Along its <a href="http://www.mybatis.org/core/java-api.html#sqlSessions">XML configuration settings</a>, there is a <code>&lt;environment&gt;</code> section available for specifying different environment profiles (development, test, production and the like). Basically, it looks like this:</p>
+
+<div>
+  <pre><code class='xml'>&lt;environments default=&quot;development&quot;&gt;
+    &lt;environment id=&quot;development&quot;&gt;
+        &lt;transactionManager type=&quot;JDBC&quot;&gt;
+        ...
+        &lt;dataSource type=&quot;POOLED&quot;&gt;
+        ...
+    &lt;/environment&gt;
+    &lt;environment id=&quot;production&quot;&gt;
+        &lt;transactionManager type=&quot;MANAGED&quot;&gt;
+        ...
+        &lt;dataSource type=&quot;JNDI&quot;&gt;
+        ...
+    &lt;/environment&gt;
+&lt;/environments&gt;</code></pre>
+</div>
+
+
+<p>As I started writing tests for a example webapp I was creating, I quickly felt the need to organize these different environment profiles using a simple mechanism, in order to easily get a <code>SqlSessionFactory</code> instance with the right environment setting whenever I needed. e.g: when testing, I needed an instance using the “test” environment profile.</p>
+
+<!--more-->
+
+
+<p>You can retrive a <code>SqlSessionFactory</code> instance by calling the <code>build()</code> method from the <code>SqlSessionFactoryBuilder</code> class, like so:</p>
+
+<div>
+  <pre><code class='java'>String configFilename = &quot;config/mybatis.cfg.xml&quot;;
+InputStream inputStream = Resources.getResourceAsStream(configFilename);
+SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+SqlSessionFactory factory = builder.build(inputStream);</code></pre>
+</div>
+
+
+<p>which will construct a <code>SqlSessionFactory</code> that uses the default environment specified in the default attribute of the <code>&lt;environments&gt;</code> element. Optionally, you can specify the environment id as the second argument to the <code>build()</code> call:</p>
+
+<div>
+  <pre><code class='java'>String environmentId = &quot;test&quot;;
+SqlSessionFactory factory = builder.build(inputStream, environmentId);</code></pre>
+</div>
+
+
+<p>I first considered writing a very simple class with nothing but a static method like <code>getSqlSessionFactory(String env)</code>, that would return a <code>SqlSessionFactory</code> instance using the <code>environmentId</code> passed in by env.  But the downside is that each of my DAO classes, which all use <code>SqlSessionFactory</code> to open their sessions, would also have to carry this <code>environmentId</code> in order to get the right instance. Not to mention that:</p>
+
+<ol>
+<li>they would all have to implement (or inherit) the logic of building a <code>SqlSessionFactory</code> using their <code>environmentId</code></li>
+<li>they would also need to be instantiated/configured by the caller code, and therefore the caller code would also have to know the <code>environmentId</code></li>
+</ol>
+
+
+<p>Instead of spreading the <code>environmentId</code> all over the place, I came up with a somewhat interesting solution using <a href="http://code.google.com/p/google-guice/">Google Guice</a>, which is a very handy way of using the <a href="http://martinfowler.com/articles/injection.html">Dependency Injection</a> pattern. It’s lightweight and extremely easy to get it up and running.</p>
+
+<p>First of all, I began applying the Dependency Injection pattern by turning my implicit dependency into an explicit one. This was easily done by requiring a <code>SqlSessionFactory</code> instance to be provided via the constructor of all my DAO classes, like this:</p>
+
+<div>
+  <pre><code class='java'>public abstract class AbstractDAO {
+    protected SqlSessionFactory factory;
+    protected SqlSession session;
+
+    public AbstractDAO(SqlSessionFactory factory) {
+        this.factory = factory;
+    }
+
+    protected void openSession() {
+        session = factory.openSession();
+    }
+
+    // ..
+}
+
+public class SomeDAO extends AbstractDAO {
+
+    public SomeDAO(SqlSessionFactory factory) {
+        super(factory);
+    }
+
+    // ..
+}</code></pre>
+</div>
+
+
+<p>Again, I’ve only applied the dependency injection pattern so far. Note that my DAO classes now don’t need to know which <code>environmentId</code> or which XML file was used to instantiate the <code>SqlSessionFactory</code>, nor any other details of how it was instantiated. This kind of approach increases the cohesion and reusability of your code.</p>
+
+<p>Next, I needed to configure Guice to inject an <code>SqlSessionFactory</code> instance into our DAO classes whenever they are constructed using a Guice <code>Injector</code>. The traditional approach to that <strong>would</strong> be:</p>
+
+<div>
+  <pre><code class='java'>public class DAOModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(SqlSessionFactory.class).to(TestSqlSessionFactory.class);
+    }
+}</code></pre>
+</div>
+
+
+<p>then, in the <code>setUp</code> method of your tests:</p>
+
+<div>
+  <pre><code class='java'>Injector injector = Guice.createInjector(new DAOModule());
+SomeDAO dao = injector.getInstance(SomeDAO.class);</code></pre>
+</div>
+
+
+<p>where <code>TestSqlSessionFactory</code> would extend <code>SqlSessionFactory</code> and configure itself using the right <code>environmentId</code> string.</p>
+
+<p>But that isn’t possible, since the <code>SqlSessionFactory</code> is instantiated using the <code>SqlSessionFactoryBuilder.build()</code> method, which require the config file input as the first argument to configure the instance that is returned.</p>
+
+<p>Then I discovered something, just by analyzing the available methods that Eclipse suggested me right after <code>bind(SqlSessionFactory.class).</code> inside my <code>DAOModule</code>: a method called <code>toProvider()</code>, which maps your dependency to a class that implements <code>Provider&lt;T&gt;</code>, which provides an instance when needed. All you need implement is a method called <code>T get()</code> that returns an instance of your <code>T</code> dependency:</p>
+
+<div>
+  <pre><code class='java'>public class TestSqlSessionFactoryProvider implements Provider&lt;SqlSessionFactory&gt; {
+    public T get() {
+        String configFilename = &quot;config/mybatis.cfg.xml&quot;;
+        String env = &quot;test&quot;; // environment id
+
+        SqlSessionFactoryBuilder factoryBuilder = new SqlSessionFactoryBuilder();
+        InputStream inputStream = new FileInputStream(configFilename);
+        SqlSessionFactory factory = factoryBuilder.build(inputStream, env);
+        return factory;
+    }
+}</code></pre>
+</div>
+
+
+<p>Now each time I need a new setting for an environment, I just create a class that implements <code>Provider&lt;SqlSessionFactory&gt;</code> and configures/instantiates my <code>SqlSessionFactory</code> with the right environment setting. After some cleaning up, here’s what I came up with for my <code>Module</code>s:</p>
+
+<div>
+  <pre><code class='java'>class DAOModule extends AbstractModule {
+    public void configure() {
+        bind(SqlSessionFactory.class)
+            .toProvider(ProductionSqlSessionFactoryProvider.class);
+    }
+}
+
+class TestDAOModule extends AbstractModule {
+    public void configure() {
+        bind(SqlSessionFactory.class)
+            .toProvider(TestSqlSessionFactoryProvider.class);
+    }
+}</code></pre>
+</div>
+
+
+<p>and on the <code>Provider</code> side:</p>
+
+<div>
+  <pre><code class='java'>abstract class SqlSessionFactoryProvider implements Provider&lt;SqlSessionFactory&gt; {
+
+    private String defaultConfigFilename = &quot;config/mybatis.cfg.xml&quot;;
+
+    public SqlSessionFactory get() {
+        SqlSessionFactoryBuilder factoryBuilder = new SqlSessionFactoryBuilder();
+        InputStream inputStream = new FileInputStream(getConfigFilename());
+        SqlSessionFactory factory = factoryBuilder
+            .build(inputStream, getEnvironmentId());
+        return factory;
+    }
+
+    // override this to specify a different config filename
+    public String getConfigFilename() {
+        return defaultConfigFilename;
+    }
+
+    // should return something like: &quot;test&quot; or &quot;production&quot;
+    abstract public String getEnvironmentId();
+}
+
+class ProductionSqlSessionFactoryProvider extends SqlSessionFactoryProvider {
+
+    private String environmentId = &quot;production&quot;;
+
+    public String getEnvironmentId() {
+        return environmentId;
+    }
+}
+
+class TestSqlSessionFactoryProvider extends SqlSessionFactoryProvider {
+
+    private String environmentId = &quot;test&quot;;
+
+    public String getEnvironmentId() {
+        return environmentId;
+    }
+}</code></pre>
+</div>
+
+
+<p>Now, inside my tests, I just need to tell Guice to load up the desired <code>Module</code>:</p>
+
+<div>
+  <pre><code class='java'>class SomeDAOTest {
+    private Injector injector = Guice.createInjector(new TestDAOModule());
+    private SqlSessionFactory factory = null;
+
+    @Before
+    public void setUp() {
+        factory = injector.createInstance(SomeDAO.class);
+    }
+
+    @After
+    public void setUp() {
+        factory = null;
+    }
+
+    // ..
+}</code></pre>
+</div>
+
+
+<p>It got a little verbose, we have long names like <code>ProductionSqlSessionFactoryProvider</code>, but doing that way eases maintenance, and prevents you from wasting time coming up with a unnecessarily short naming for your classes.</p>
+]]></content>
+  </entry>
+  
+</feed>

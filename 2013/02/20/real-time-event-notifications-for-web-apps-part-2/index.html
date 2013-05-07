@@ -1,0 +1,410 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Real time event notifications for web apps - Part 2 - Rodolfo Ferreira</title>
+	<meta name="author" content="Rodolfo Ferreira">
+
+	
+	<meta name="description" content="Real Time Event Notifications for Web Apps - Part 2 Overview So, in my previous post, I introduced the idea of a solution for realtime event &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Rodolfo Ferreira" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		document.write("<img src='http://www.gravatar.com/avatar/" + MD5("rodolfo@rodolfoferreira.com.br") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+	</script>
+</div>
+<h1><a href="/">Rodolfo Ferreira</a></h1>
+<p class="subtitle">Calmer than you are</p>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/archives">Archives</a></li>
+  <li><a href="/about.html">About me</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/116065547582875783280" rel="author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/rodolfo42" title="GitHub">GitHub</a>
+		
+		
+		<a class="linkedin" href="http://www.linkedin.com/in/rodolfo42" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Real Time Event Notifications for Web Apps - Part 2</h1>
+	<div class="entry-content" itemprop="articleBody"><h2>Overview</h2>
+
+<p>So, in my <a href="/2013/02/14/real-time-event-notifications-for-web-apps-part-1/">previous post</a>, I introduced the idea of a solution for realtime event messaging using a Pub/Sub implementation and Chromium&#8217;s Desktop Notifications API.</p>
+
+<p>The architectural view presented there only covers the big picture. Now let&#8217;s get into details technically.</p>
+
+<p>In summary, the solution presented here will provide a organized way of having a event server available for publishing events to active users. This is a web-based browser-only solution, as it uses WebSockets and the Socket.IO library.</p>
+
+<blockquote><p><strong>Note:</strong> The notification pop-ups are implemented using Desktop Notifications in order to have the notifications appear outside the tab, even when the browser is minimized. This only works in Chrome and Safari right now. If you really need this outside Chrome, you can use an <a href="https://addons.mozilla.org/en-us/firefox/addon/html-notifications/">extension for Firefox</a>, but other browsers don&#8217;t have a similar solution as of today.</p></blockquote>
+
+<!--more-->
+
+
+<h2>The server</h2>
+
+<p>In order for the communication between the event server, app and it&#8217;s subscribers to be <strong>asynchronous</strong> as mentioned, I chose to use <a href="http://nodejs.org/" title="Joyent's Node.js official website">Node.js</a> from Joyent, due to it&#8217;s non-blocking, evented I/O model. It leverages system&#8217;s resources more efficiently when holding many concurrent connections at once, and it allows us to do concurrent network programming in a very straightforward manner. It works for me, so it&#8217;s really <em>not</em> because it&#8217;s fancy or cool.</p>
+
+<p>We will also use the <a href="http://expressjs.com/" title="Express framework website">Express</a> framework, since it simplifies the task of routing, parsing requests and sending responses.</p>
+
+<h2>The client and the communication</h2>
+
+<p>As we&#8217;re talking Javascript, the data interchange format used by this particular case will be JSON.</p>
+
+<p>And for the core &#8220;realtime behaviour&#8221; of this scheme, we&#8217;ll want to keep a permanent connection between the event server and it&#8217;s subscribers. As they&#8217;re nothing but browser clients, the choice is made towards <a href="http://socket.io/" title="Socket.IO website">Socket.IO</a>, a realtime library that provides various means to enjoy Comet-style connection between the browser and the remote server, listening for and emitting (pushing) events.</p>
+
+<h2>The code</h2>
+
+<p>We&#8217;ll have javascript code on both server and client sides.</p>
+
+<h3>Server-side</h3>
+
+<p>We begin by coding an <code>app.js</code> in a clean working directory:</p>
+
+<div>
+  <pre><code class='js'>var application_root = __dirname,
+    path = require(&quot;path&quot;),
+    fs = require(&quot;fs&quot;),
+    http = require('http');</code></pre>
+</div>
+
+
+<p>Now, we will configure the express framework, for exposing our API for publishing events.</p>
+
+<div>
+  <pre><code class='js'>// port the server will listen on
+var listenPort = 3000;
+
+var express = require(&quot;express&quot;);
+var app = express();
+
+var server = http.createServer(app);
+var io = require('socket.io').listen(server, {log: false});
+
+app.configure(function () {
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(express.errorHandler({ dumpExceptions:true, showStack:true }));
+    app.use(express.static(__dirname + '/public'));
+});</code></pre>
+</div>
+
+
+<p>We will use <a href="https://github.com/nomiddlename/log4js-node" title="log4js on github">log4js</a> to get a cleaner log output for debugging and monitoring purposes.</p>
+
+<div>
+  <pre><code class='js'>var log4js = require('log4js')
+
+log4js.configure({
+    appenders: [
+        {type: &quot;console&quot;}
+    ],
+    replaceConsole: true
+});
+
+var log = log4js.getLogger();;</code></pre>
+</div>
+
+
+<p>Declare your dependencies and project info in a <code>package.json</code> file in the root:</p>
+
+<div>
+  <pre><code class='js'>{
+    &quot;name&quot;:&quot;event-server&quot;,
+    &quot;version&quot;:&quot;0.0.1&quot;,
+    &quot;private&quot;:true,
+    &quot;scripts&quot;:{
+        &quot;start&quot;:&quot;node app&quot;
+    },
+    &quot;dependencies&quot;:{
+        &quot;express&quot;:&quot;3.1.0&quot;,
+        &quot;socket.io&quot;: &quot;0.9.13&quot;,
+        &quot;log4js&quot;: &quot;0.5.6&quot;
+    }
+}</code></pre>
+</div>
+
+
+<p>After this setup, we can begin defining our API endpoints. We will first create a POST route that receives event data and publishes it. This can be anything you want, but for now let&#8217;s assume we only need a <code>title</code>, <code>message</code> and <code>url</code> for the notification to be displayed. The data will be received by our server in a JSON string in the HTTP request body.</p>
+
+<blockquote><p><strong>Note:</strong> Express <a href="http://expressjs.com/api.html#bodyParser" title="bodyParser() API reference">also supports</a> urlencoded and multipart for parsing the request body, when using <code>bodyParser()</code> as above, but we will focus on JSON for brevity</p></blockquote>
+
+<p>Let&#8217;s create this route as <code>/events</code>:</p>
+
+<div>
+  <pre><code class='js'>app.post('/events', function (req, res) {
+    var data = req.body;
+    log.info('POST /events');
+
+    // verifies the data is indeed valid
+    // since Express automatically parses JSON body, it should be an object and non-empty
+    if(typeof data == 'object' &amp;&amp; data != {}) {
+        log.debug(JSON.stringify(data));
+        res.send({status: &quot;success&quot;}); // note the asynchronicity
+        log.debug('returned success status');
+
+        // notify clients after we are done responding
+        setTimeout(function(){
+            log.debug('pushing updates to subscribers..');
+            broadcastEvent('newMessage', data);
+        }, 1);
+    } else { // express couldn't parse the body
+        log.error('error parsing the request body');
+        log.error(data);
+    }
+});</code></pre>
+</div>
+
+
+<p>Notice that are not defining/validating any specific structure for the event data, but you can easily do that here, and just return a different status in case of an error.</p>
+
+<p>The <code>broadcastEvent</code> function is self-explaining - it&#8217;s responsible for broadcasting the event to all registered listeners of the event server. So let&#8217;s look at it&#8217;s code:</p>
+
+<div>
+  <pre><code class='js'>var onlineSockets = new SocketMap();
+
+// emit events to the top sockets of all slots, excluding the `senderSocket`
+var broadcastEvent = function(eventName, data, senderSocket) {
+    senderSocket = senderSocket || false;
+    var allSockets = onlineSockets.getList(), currSocket, qtyNotified = 0;
+    onlineSockets.debug();
+    for(var i=0; i &lt; allSockets.length; i++) {
+        currSocket = allSockets[i];
+        if(senderSocket &amp;&amp; senderSocket == currSocket) {
+            continue;
+        }
+        if(currSocket != null) {
+            qtyNotified++;
+            currSocket.emit(eventName, data);
+        }
+    }
+    log.info(qtyNotified + ' sockets where notified');
+};</code></pre>
+</div>
+
+
+<p>Now, we have a <code>onlineSockets</code> variable, which is an instance of <code>SocketMap</code>. This is a data structure created to hold all active sockets, but in a very specific manner, in order to solve the problem of having multiple tabs open on a page of your your app. The basic scheme is illustrated below;</p>
+
+<p><img src="/uploads/arch2.png" alt="Diagram describing the SocketMap scheme" /></p>
+
+<p>The squares A, B and C demonstrate the open tabs in the browser, each of those having one open WebSocket listening to events to be published by the event server. Each socket, as soon as it&#8217;s connected, sends a <code>register</code> event passing a <em>hash</em> which is unique across all open browsers/sessions, but <strong>shared between tabs</strong> (this can be, for instance, your session ID). The reference to the socket then gets stored in the <code>SocketMap</code>, which creates &#8220;stacks&#8221; keyed by each new hash it receives.</p>
+
+<p>So, when the socket registers with an existing hash:</p>
+
+<ul>
+<li>the new socket gets pushed to the stack of open sockets for that hash</li>
+<li>it becomes the one active socket for that hash</li>
+</ul>
+
+
+<p>As soon as a tab is closed, it&#8217;s socket loses connection to the server, and is automatically removed from the stack, whichever position it was in. If it was the last one (the active one), it&#8217;s removed and the socket below it becomes the active socket for that hash.</p>
+
+<h3>Client-side</h3>
+
+<p>In the client side, all we need to do is to insert the same script in all desired pages of the app. This script must:</p>
+
+<ul>
+<li>be able to access/generate a unique hash, shared between the tabs (cookie value for the session ID)</li>
+<li>register an socket for that tab, using said hash</li>
+<li>receive notifications and notify the user using Desktop Notifications API</li>
+</ul>
+
+
+<p>So in order to get the hash, you can use a js library like <a href="https://github.com/carhartl/jquery-cookie">jQuery.cookie</a> to get the cookie that represents your session ID. In this particular case, I&#8217;ll just generate a random hash and register it as a cookie, to simulate a real app&#8217;s session ID:</p>
+
+<div>
+  <pre><code class='js'>// your app cookie key
+// eg. PHPSESSID or JSESSIONID
+var COOKIE_KEY = &quot;MYCOOKIEKEY&quot;;
+
+// just for test purposes, create a cookie with an random number
+// inspired by http://stackoverflow.com/a/2117523
+if(typeof hash == 'undefined') {
+    hash = 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+        var v = Math.random()*16|0;
+        return v.toString(16);
+    });
+    $.cookie(COOKIE_KEY, hash, {expires : 3600});
+}</code></pre>
+</div>
+
+
+<p>To register the socket with the hash on the server, as we&#8217;re using Socket.IO, we need to bind a callback to the <code>connect</code> event, which is fired right after the socket connects to the server:</p>
+
+<div>
+  <pre><code class='js'>var webSocket = io.connect('http://event-server.example.com/');
+
+webSocket.on('connect', function() {
+    var data = {&quot;hash&quot;: hash};
+    webSocket.emit('register', data);
+});</code></pre>
+</div>
+
+
+<p>And finally, use the <a href="http://www.chromium.org/developers/design-documents/desktop-notifications/api-specification" title="Chromium Desktop Notification Spec">Desktop Notifications API</a> (Chrome/Safari only, FF via extension) to notify the user of events published by the event server:</p>
+
+<div>
+  <pre><code class='js'>webSocket.on('newMessage', function(payload) {
+    // sanitize event attributes
+    var title = payload.title;
+    var message = payload.message;
+    
+    // creates a DesktopNotification without the icon
+    var n = (webkitNotifications.createNotification(&quot;&quot;, title, message));
+    
+    // when clicked, the notification should close and the user redirected to the URL, if provided
+    n.onclick = function(e) {
+        if(payload.url) {
+            // open url in new tab
+            window.open(payload.url, '_blank');
+        } else {
+            // otherwise, bring the tab into focus
+            window.focus();
+        }
+        // closes the notification popup
+        this.close();
+    };
+    
+    n.show(); // important - display the notification!
+});</code></pre>
+</div>
+
+
+<p>In the code above, I added support for a <code>url</code> attribute, which, if present the incoming event data, loads the specified url when the notification is clicked.</p>
+
+<h2>Bottomline</h2>
+
+<p>What&#8217;s briliant about this solution, is that, in order for the user not to be harassed by a lot of notifications for each open tab, which can be 10, 20 or a 100 tabs, the server only publishes events to the <em>active</em> sockets (represented by the continuous black line), which are basically the last sockets to register for each hash.</p>
+
+<p>The source code for this entire solution is available in Github: <a href="https://github.com/rodolfo42/event-notifications">rodolfo42/event-notifications</a></p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+  
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2013 - Rodolfo Ferreira -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> and <a href="http://pages.github.com">GitHub Pages</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'rferreirablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/';
+        var disqus_url = 'http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-38414082-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
