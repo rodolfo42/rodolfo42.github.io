@@ -2,40 +2,40 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>
-            http://rodolfoferreira.com.br/2012/09/09/using-google-guice-to-manage-environment-profiles/
+            http://rodolfo42.github.io/2012/09/09/using-google-guice-to-manage-environment-profiles/
         </loc>
         <lastmod>2013-05-07T01:19:40-03:00</lastmod>
     </url>
     <url>
         <loc>
-            http://rodolfoferreira.com.br/2013/02/14/real-time-event-notifications-for-web-apps-part-1/
+            http://rodolfo42.github.io/2013/02/14/real-time-event-notifications-for-web-apps-part-1/
         </loc>
         <lastmod>2013-05-07T01:19:40-03:00</lastmod>
     </url>
     <url>
         <loc>
-            http://rodolfoferreira.com.br/2013/02/20/real-time-event-notifications-for-web-apps-part-2/
+            http://rodolfo42.github.io/2013/02/20/real-time-event-notifications-for-web-apps-part-2/
         </loc>
         <lastmod>2013-05-07T01:19:40-03:00</lastmod>
     </url>
     <url>
-        <loc>http://rodolfoferreira.com.br/about.html</loc>
+        <loc>http://rodolfo42.github.io/about.html</loc>
         <lastmod>2013-05-07T02:14:22-03:00</lastmod>
     </url>
     <url>
-        <loc>http://rodolfoferreira.com.br/archives/</loc>
+        <loc>http://rodolfo42.github.io/archives/</loc>
         <lastmod>2013-05-07T01:19:40-03:00</lastmod>
     </url>
     <url>
-        <loc>http://rodolfoferreira.com.br/curriculum.html</loc>
+        <loc>http://rodolfo42.github.io/curriculum.html</loc>
         <lastmod>2013-05-07T02:15:03-03:00</lastmod>
     </url>
     <url>
-        <loc>http://rodolfoferreira.com.br/</loc>
+        <loc>http://rodolfo42.github.io/</loc>
         <lastmod>2013-05-07T01:39:39-03:00</lastmod>
     </url>
     <url>
-        <loc>http://rodolfoferreira.com.br/robots.txt</loc>
+        <loc>http://rodolfo42.github.io/robots.txt</loc>
         <lastmod>2013-05-07T01:12:21-03:00</lastmod>
     </url>
 </urlset>

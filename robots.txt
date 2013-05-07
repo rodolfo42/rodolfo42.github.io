@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://rodolfoferreira.com.br/sitemap.xml 
+Sitemap: http://rodolfo42.github.io/sitemap.xml 
