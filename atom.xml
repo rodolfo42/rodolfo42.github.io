@@ -4,7 +4,7 @@
   <title><![CDATA[Rodolfo Ferreira]]></title>
   <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
   <link href="http://rodolfoferreira.com.br/"/>
-  <updated>2013-05-07T03:17:18-03:00</updated>
+  <updated>2013-05-10T00:37:22-03:00</updated>
   <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
@@ -266,7 +266,14 @@ webSocket.on('connect', function() {
 
 <p>What&#8217;s briliant about this solution, is that, in order for the user not to be harassed by a lot of notifications for each open tab, which can be 10, 20 or a 100 tabs, the server only publishes events to the <em>active</em> sockets (represented by the continuous black line), which are basically the last sockets to register for each hash.</p>
 
-<p>The source code for this entire solution is available in Github: <a href="https://github.com/rodolfo42/event-notifications">rodolfo42/event-notifications</a></p>
+<hr />
+
+<p>The source code for this entire solution is available in the Github repository below.</p>
+
+<div class="github-widget" data-repo="rodolfo42/event-notifications"></div>
+
+
+
 ]]></content>
   </entry>
   
