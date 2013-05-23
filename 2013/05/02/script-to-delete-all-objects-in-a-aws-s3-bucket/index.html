@@ -66,6 +66,9 @@
 		<a class="coderwall" href="https://coderwall.com/rodolfo42" title="Coderwall">Coderwall</a>
 		
 		
+		<a class="stackoverflow" href="https://stackoverflow.com/2353377" title="StackOverflow">StackOverflow</a>
+		
+		
 		<a class="linkedin" href="http://www.linkedin.com/in/rodolfo42" title="LinkedIn">LinkedIn</a>
 		
 		
@@ -93,6 +96,9 @@
 <p>This is mainly for <em>test</em> cases, when you&#8217;re new to AWS S3 and you create a <em>test</em> bucket to start <em>testing</em> things out. Soon you discover there&#8217;s a lot of extra objects like <code>FooBar2013-03-29-02-54-37-E56AFCD9348BBA9D776F6C4</code> (that&#8217;s ok, it&#8217;s just the logging), but when you try to delete this entire test bucket, you can&#8217;t, because <strong>S3 buckets need to be empty before they are deleted</strong>.</p>
 
 <p>Since I particularly had many many objects like these, I went through all these in the AWS S3 web interface and began selecting a bulk of them, deleting, waiting, then again and again (because the web interface doesn&#8217;t have a &#8220;select all&#8221; feature to date - I think for security reasons).</p>
+
+<!-- more -->
+
 
 <h2>Deleting all objects through a ruby script using AWS SDK</h2>
 
