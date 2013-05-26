@@ -4,7 +4,7 @@
   <title><![CDATA[Rodolfo Ferreira]]></title>
   <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
   <link href="http://rodolfoferreira.com.br/"/>
-  <updated>2013-05-23T01:21:26-03:00</updated>
+  <updated>2013-05-26T13:15:26-03:00</updated>
   <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
@@ -292,6 +292,18 @@ webSocket.on('connect', function() {
 <p>What&#8217;s briliant about this solution, is that, in order for the user not to be harassed by a lot of notifications for each open tab, which can be 10, 20 or a 100 tabs, the server only publishes events to the <em>active</em> sockets (represented by the continuous black line), which are basically the last sockets to register for each hash.</p>
 
 <hr />
+
+<h3>Demo</h3>
+
+<p>A demo is available on-line: <a href="http://app.rodolfoferreira.com.br/">http://app.rodolfoferreira.com.br/</a>.</p>
+
+<p>Just enable Desktop Notifications via the switch (accept the request for permission), open multiple tabs and fire a message via the web interface. You&#8217;ll only receive one notification. As you close the tabs and fire messages, you will continue to receive only one notification, though all open tabs are listening.</p>
+
+<p>You can invite some of your friends to open this same URL in their browsers and start a remote chat!</p>
+
+<hr />
+
+<h3>Source code</h3>
 
 <p>The source code for this entire solution is available in the Github repository below.</p>
 
