@@ -4,7 +4,7 @@
   <title><![CDATA[Rodolfo Ferreira]]></title>
   <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
   <link href="http://rodolfoferreira.com.br/"/>
-  <updated>2013-05-26T18:12:38-03:00</updated>
+  <updated>2013-05-26T18:24:46-03:00</updated>
   <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
@@ -117,7 +117,7 @@ log4js.configure({
     replaceConsole: true
 });
 
-var log = log4js.getLogger();;</code></pre>
+var log = log4js.getLogger();</code></pre>
 </div>
 
 
