@@ -4,7 +4,7 @@
   <title><![CDATA[Rodolfo Ferreira]]></title>
   <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
   <link href="http://rodolfoferreira.com.br/"/>
-  <updated>2013-05-27T01:19:03-03:00</updated>
+  <updated>2013-05-27T02:04:29-03:00</updated>
   <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Tomcat 7 service script]]></title>
+    <link href="http://rodolfoferreira.com.br/2013/05/27/tomcat-service-shell-script/"/>
+    <updated>2013-05-27T00:00:00-03:00</updated>
+    <id>http://rodolfoferreira.com.br/2013/05/27/tomcat-service-shell-script</id>
+    <content type="html"><![CDATA[<p>So, here&#8217;s my Tomcat service init script. It was adapted from many others throughout the web, which when didn&#8217;t gave me syntax errors, didn&#8217;t make use of tomcat&#8217;s PID file or just didn&#8217;t work at all.</p>
+
+<!-- more -->
+
+
+<h2>The script</h2>
+
+<script src="https://gist.github.com/rodolfo42/5654188.js"></script>
+
+
+<h2>How to use it</h2>
+
+<p>First, download the script contents and copy the file to <code>/etc/init.d</code> (as root):</p>
+
+<pre><code>    $ wget https://gist.github.com/rodolfo42/5654188/raw/tomcat.sh
+    $ sudo cp tomcat.sh /etc/init.d/tomcat
+</code></pre>
+
+<blockquote><p>Don&#8217;t forget to strip the extension as above</p></blockquote>
+
+<p>Now, to use it:</p>
+
+<pre><code>    # service tomcat (start|stop|status)
+</code></pre>
+
+<p>To enable it on system start-up (just need to add it, the run levels are already in the script):</p>
+
+<pre><code>    # chkconfig --add tomcat
+</code></pre>
+
+<p>Or, on Debian-based systems:</p>
+
+<pre><code>    # update-rc.d tomcat 20 2 3 4 5
+</code></pre>
+
+<p>Hope it helps you as it helps me.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Script to delete all objects in a AWS S3 bucket]]></title>
