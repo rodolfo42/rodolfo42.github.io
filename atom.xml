@@ -4,7 +4,7 @@
   <title><![CDATA[Rodolfo Ferreira]]></title>
   <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
   <link href="http://rodolfoferreira.com.br/"/>
-  <updated>2013-06-01T15:18:40-03:00</updated>
+  <updated>2013-06-11T23:31:42-03:00</updated>
   <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
@@ -68,16 +68,48 @@
 
 <p>This is mainly for <em>test</em> cases, when you&#8217;re new to AWS S3 and you create a <em>test</em> bucket to start <em>testing</em> things out. Soon you discover there&#8217;s a lot of extra objects like <code>FooBar2013-03-29-02-54-37-E56AFCD9348BBA9D776F6C4</code> (that&#8217;s ok, it&#8217;s just the logging), but when you try to delete this entire test bucket, you can&#8217;t, because <strong>S3 buckets need to be empty before they are deleted</strong>.</p>
 
-<p>Since I particularly had many many objects like these, I went through all these in the AWS S3 web interface and began selecting a bulk of them, deleting, waiting, then again and again (because the web interface doesn&#8217;t have a &#8220;select all&#8221; feature to date - I think for security reasons).</p>
+<p>Since I particularly had many many objects like these, I started going through all of them in the AWS S3 web interface deleting, waiting, then selecting again (because the web interface doesn&#8217;t have a &#8220;select all&#8221; feature to date - I think for security/performance reasons).</p>
 
 <!-- more -->
 
+
+<p><strong>Update (11/06/2013):</strong> you should use <code>bucket.delete!</code> instead as it does all the work of clearing the bucket beforehand - <a href="http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/Bucket.html#delete!-instance_method">see here</a></p>
 
 <h2>Deleting all objects through a ruby script using AWS SDK</h2>
 
 <p>The script below was adapted from <a href="http://stackoverflow.com/a/1179190">this answer</a>. I first tried to use it to delete my test bucket, but the original script in this answer seems to be outdated (the new AWS SDK works a little bit differently). So here it is:</p>
 
-<script src="https://gist.github.com/rodolfo42/5625123.js"></script>
+<div><script src='https://gist.github.com/5625123.js?file=deleteall.rb'></script>
+<noscript><pre><code># Deletes all objects in a S3 bucket, so you can finally delete it
+# inspired by
+# http://stackoverflow.com/a/1179190
+
+require 'aws'
+require 'yaml'
+
+credentials = {
+    :access_key_id =&gt; 'YOUR_ACCESS_KEY_ID',
+    :secret_access_key =&gt; 'YOUR_SECRET_ACCESS_KEY'
+}
+bucket_name = 'YOUR_BUCKET_NAME'
+
+AWS.config(credentials)
+s3 = AWS::S3.new
+
+bucket = s3.buckets.find(bucket_name).first
+
+while(!bucket.empty?)
+begin
+    puts &quot;Deleting objects in bucket #{bucket_name}&quot;
+    bucket.objects.each do |object|
+        print &quot;&gt; Deleting object #{object.key} ...&quot;
+        object.delete
+        puts &quot;done&quot;
+    end
+    puts &quot;Done deleting objects&quot;
+end
+
+end</code></pre></noscript></div>
 
 
 <blockquote><p>Don&#8217;t forget to replace things like <code>YOUR_ACCESS_KEY_ID</code> with your own data.</p></blockquote>
