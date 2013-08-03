@@ -4,7 +4,7 @@
   <title><![CDATA[Rodolfo Ferreira]]></title>
   <link href="http://rodolfoferreira.com.br/atom.xml" rel="self"/>
   <link href="http://rodolfoferreira.com.br/"/>
-  <updated>2013-06-11T23:31:42-03:00</updated>
+  <updated>2013-08-03T18:11:18-03:00</updated>
   <id>http://rodolfoferreira.com.br/</id>
   <author>
     <name><![CDATA[Rodolfo Ferreira]]></name>
@@ -373,7 +373,7 @@ webSocket.on('connect', function() {
 
 <h3>Demo</h3>
 
-<p>A demo is available on-line: <a href="http://app.rodolfoferreira.com.br/">http://app.rodolfoferreira.com.br/</a>.</p>
+<p>A demo is available on-line <a href="http://evntsrvr.aws.af.cm/">here</a>.</p>
 
 <p>Just enable Desktop Notifications via the switch (accept the request for permission), open multiple tabs and fire a message via the web interface. You&#8217;ll only receive one notification. As you close the tabs and fire messages, you will continue to receive only one notification, though all open tabs are listening.</p>
 
