@@ -1,0 +1,25 @@
+# Dependencies
+markdown:         kramdown
+pygments:         true
+
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            'Rodolfo Ferreira'
+tagline:          'Calmer than you are'
+description:      'Web developer, open-source enthusiast. Loves building stuff that works. Big fan of progressive music.'
+url:              http://rodolfoferreira.com.br/
+
+author:
+  name:           'Rodolfo Ferreira'
+  url:            https://plus.google.com/+RodolfoFerreiraDev
+
+paginate:         5
+
+social:
+  github:           https://github.com/rodolfo42
+  gplus:            https://plus.google.com/+RodolfoFerreiraDev
+  linkedin:         http://www.linkedin.com/in/rodolfo42
+  stackoverflow:    http://stackoverflow.com/users/2353377/rodolfo42
+  koding:           https://koding.com/rodolfo42
