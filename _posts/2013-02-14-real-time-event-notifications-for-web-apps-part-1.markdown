@@ -16,7 +16,7 @@ Note the emphasis on **active** - what I mean is: currently logged in and active
 
 Of course you could have e-mail alerts, but that could end up cluttering every inbox with unnecessary and outdated alerts, once the order could have already been acted upon long before these alerts would be checked.
 
-<!--more-->
+<!-- more -->
 
 ## Architecture
 

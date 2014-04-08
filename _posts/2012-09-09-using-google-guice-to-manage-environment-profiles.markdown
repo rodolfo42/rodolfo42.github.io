@@ -26,7 +26,7 @@ A few days ago, I started studying [MyBatis](http://www.mybatis.org/), a persist
 
 As I started writing tests for a example webapp I was creating, I quickly felt the need to organize these different environment profiles using a simple mechanism, in order to easily get a `SqlSessionFactory` instance with the right environment setting whenever I needed. e.g: when testing, I needed an instance using the “test” environment profile.
 
-<!--more-->
+<!-- more -->
 
 You can retrive a `SqlSessionFactory` instance by calling the `build()` method from the `SqlSessionFactoryBuilder` class, like so:
 

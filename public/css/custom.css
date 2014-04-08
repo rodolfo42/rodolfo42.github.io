@@ -1,0 +1,41 @@
+.sidebar {
+	opacity: 0.9;
+}
+
+.sidebar:hover {
+	opacity: 1;
+}
+
+.sidebar-logo {
+	padding: 1.5rem;
+}
+
+.sidebar-item h2 {
+	color: white;
+}
+
+.sidebar-logo img {
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	width: 160px;
+	margin: 0 auto;
+}
+
+.post-content img {
+	margin: 0 auto;
+	border: 1px solid rgb(245, 245, 245);
+	padding: 40px;
+}
+
+a.read-more {
+	color: #999;
+}
+
+a.read-more:after {
+	content: ' \00BB';
+}
+
+.post-date {
+	color: #CCC;
+}

@@ -15,7 +15,7 @@ In summary, the solution presented here will provide a organized way of having a
 
 > **Note:** The notification pop-ups are implemented using Desktop Notifications in order to have the notifications appear outside the tab, even when the browser is minimized. This only works in Chrome and Safari right now. If you really need this outside Chrome, you can use an [extension for Firefox](https://addons.mozilla.org/en-us/firefox/addon/html-notifications/), but other browsers don't have a similar solution as of today.
 
-<!--more-->
+<!-- more -->
 
 ## The server
 
@@ -44,7 +44,7 @@ var application_root = __dirname,
     http = require('http');
 {% endhighlight %}
 
-Now, we will configure the express framework, for exposing our API for publishing events. 
+Now, we will configure the express framework, for exposing our API for publishing events.
 
 {% highlight js %}
 // port the server will listen on
@@ -163,7 +163,7 @@ So, when the socket registers with an existing hash:
 
 - the new socket gets pushed to the stack of open sockets for that hash
 - it becomes the one active socket for that hash
- 
+
 As soon as a tab is closed, it's socket loses connection to the server, and is automatically removed from the stack, whichever position it was in. If it was the last one (the active one), it's removed and the socket below it becomes the active socket for that hash.
 
 
@@ -211,10 +211,10 @@ webSocket.on('newMessage', function(payload) {
     // sanitize event attributes
     var title = payload.title;
     var message = payload.message;
-    
+
     // creates a DesktopNotification without the icon
     var n = (webkitNotifications.createNotification("", title, message));
-    
+
     // when clicked, the notification should close and the user redirected to the URL, if provided
     n.onclick = function(e) {
         if(payload.url) {
@@ -227,7 +227,7 @@ webSocket.on('newMessage', function(payload) {
         // closes the notification popup
         this.close();
     };
-    
+
     n.show(); // important - display the notification!
 });
 {% endhighlight %}

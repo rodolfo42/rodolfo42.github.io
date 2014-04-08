@@ -1,6 +1,8 @@
 # Dependencies
 markdown:         kramdown
 pygments:         true
+safe:             true
+lsi:              false
 
 # Permalinks
 permalink:        pretty
@@ -10,6 +12,7 @@ title:            'Rodolfo Ferreira'
 tagline:          'Calmer than you are'
 description:      'Web developer, open-source enthusiast. Loves building stuff that works. Big fan of progressive music.'
 url:              http://rodolfoferreira.com.br/
+avatar_url:       http://gravatar.com/avatar/01b0fe8ff76f21e113d5065c4b715ef1?s=120
 
 author:
   name:           'Rodolfo Ferreira'
@@ -23,3 +26,7 @@ social:
   linkedin:         http://www.linkedin.com/in/rodolfo42
   stackoverflow:    http://stackoverflow.com/users/2353377/rodolfo42
   koding:           https://koding.com/rodolfo42
+
+disqus_short_name:  rferreirablog
+
+google_analytics_tracking_id: UA-38414082-1

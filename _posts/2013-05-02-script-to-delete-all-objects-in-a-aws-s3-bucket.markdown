@@ -7,19 +7,51 @@ comments: true
 
 ## Why?
 
-This is mainly for *test* cases, when you're new to AWS S3 and you create a *test* bucket to start *testing* things out. Soon you discover there's a lot of extra objects like `FooBar2013-03-29-02-54-37-E56AFCD9348BBA9D776F6C4` (that's ok, it's just the logging), but when you try to delete this entire test bucket, you can't, because **S3 buckets need to be empty before they are deleted**.
+This is mainly for test cases, when you're new to AWS S3 and you create a *test* bucket to start *testing* things out. Soon you discover there's a lot of extra objects like `FooBar2013-03-29-02-54-37-E56AFCD9348BBA9D776F6C4` (that's ok, it's just the logging), but when you try to delete this entire test bucket, you can't, because S3 buckets need to be empty before they are deleted.
 
 Since I particularly had many many objects like these, I started going through all of them in the AWS S3 web interface deleting, waiting, then selecting again (because the web interface doesn't have a "select all" feature to date - I think for security/performance reasons).
 
 <!-- more -->
 
-**Update (11/06/2013):** you should use `bucket.delete!` instead as it does all the work of clearing the bucket beforehand - [see here][AWSS3BucketDelete]
+> *Update (11/06/2013)*  
+You should use `bucket.delete!` instead as it does all the work of clearing the bucket beforehand - [see here][AWSS3BucketDelete]
 
 ## Deleting all objects through a ruby script using AWS SDK
 
 The script below was adapted from [this answer][StackOverflowAnswer]. I first tried to use it to delete my test bucket, but the original script in this answer seems to be outdated (the new AWS SDK works a little bit differently). So here it is:
 
-{% gist 5625123 deleteall.rb %}
+{% highlight ruby %}
+# Deletes all objects in a S3 bucket, so you can finally delete it
+# inspired by
+# http://stackoverflow.com/a/1179190
+
+require 'aws'
+require 'yaml'
+
+credentials = {
+    :access_key_id => 'YOUR_ACCESS_KEY_ID',
+    :secret_access_key => 'YOUR_SECRET_ACCESS_KEY'
+}
+bucket_name = 'YOUR_BUCKET_NAME'
+
+AWS.config(credentials)
+s3 = AWS::S3.new
+
+bucket = s3.buckets.find(bucket_name).first
+
+while(!bucket.empty?)
+begin
+    puts "Deleting objects in bucket #{bucket_name}"
+    bucket.objects.each do |object|
+        print "> Deleting object #{object.key} ..."
+        object.delete
+        puts "done"
+    end
+    puts "Done deleting objects"
+end
+
+end
+{% endhighlight %}
 
 > Don't forget to replace things like `YOUR_ACCESS_KEY_ID` with your own data.
 
