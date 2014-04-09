@@ -4,7 +4,7 @@ comments: true
 published: true
 ---
 
-I found myself a question while solving some [S99](http://aperiodic.net/phil/scala/s-99/) problems in Clojure.
+I found myself a question while solving some [S99](http://aperiodic.net/phil/scala/s-99/){:target="_blank"} problems in Clojure.
 
 <!-- more -->
 
