@@ -12,18 +12,20 @@ When sequentially processing a huge set of records in an SQL database, for examp
 2. `SELECT` again with a `LIMIT` clause (or `ROWNUM` if you're using Oracle; *argh..*)
 3. Repeat step 2 until the total of processed records matches `c`
 
-I was almost doing that, and then I realized I could do something much smarter.
+I was almost doing that for a task today, and then I realized I could do something much smarter.
 
 <!-- more -->
 
 ### Improving
 
-This one is something that applies when:
+Basically, I discarded the notion of a total, since it may not be consistent due to the concurrency issues mentioned above. From there, I just needed some way to figure out when to stop processing.
+
+This is something that applies when:
 
  1. You don't have/need a progress bar
  1. You have concurrency issues (e.g. when records are added/removed from the database while processing)
 
-Basically, I discarded the notion of a total, since it may not be consistent due to the concurrency issues mentioned above. From there, I just needed some way to figure out when to stop processing. So I just did this (pseudo-code):
+So I just did this (pseudo-code):
 
 {% highlight javascript %}
 done = false
@@ -35,7 +37,7 @@ function getRecords( startIndex, limit ) {
 }
 {% endhighlight %}
 
-When I got less records than the limit, this means that I'm at the last "page" of the records. Setting a flag allows me to control whether to stop processing:
+When I get less records than the maximum I asked for, this means that I'm at the last "page" of the set. Setting a flag allows me to control when to stop looking for records:
 
 {% highlight javascript %}
 function processRecords() {
@@ -50,6 +52,4 @@ function processRecords() {
 function process( records ) { /* code */ }
 {% endhighlight %}
 
-In the case that the amount of records is divisible by the batch limit, we'll simply have an extra query that returns no results. E.g.: 1000 records using 100 as batch limit.
-
-> In a high-level language like Java or .NET, an iteration loop will do in order to treat those cases. Otherwise, just check if the length of list > 0.
+In case the amount of records is divisible by the batch limit, we'll simply have an extra query that returns no results. E.g.: 1000 records using 100 as batch limit.
