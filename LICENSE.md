@@ -1,4 +1,10 @@
-# Released under MIT License
+# Rodolfo Ferreira
+
+GNU GENERAL PUBLIC LICENSE Version 2
+
+# Lanyon theme
+
+## Released under MIT License
 
 Copyright (c) 2014 Mark Otto.
 
