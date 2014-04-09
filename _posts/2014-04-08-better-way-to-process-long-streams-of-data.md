@@ -14,6 +14,8 @@ When sequentially processing a huge set of records in an SQL database, for examp
 
 I was almost doing that, and then I realized I could do something much smarter.
 
+<!-- more -->
+
 ### Improving
 
 This one is something that applies when:
