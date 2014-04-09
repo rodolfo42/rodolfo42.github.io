@@ -25,7 +25,9 @@ Basically, I discarded the notion of a total, since it may not be consistent due
 
 {% highlight c %}
 done = false
+{% endhighlight %}
 
+{% highlight c %}
 function getRecords( startIndex, limit ) {
   records = db.select( startIndex, limit )
   done = ( records.length < limit )
