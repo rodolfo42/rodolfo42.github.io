@@ -18,13 +18,11 @@ GitHub: [https://github.com/rodolfo42](https://github.com/rodolfo42)
 
 ## Resumo
 
-Quatro anos de experiência na construção de sistemas web distribuídos (da
- análise até produção) e planejamento e gerenciamento de infraestrutura Cloud. Foco na plataforma Java, especificamente Java EE. Interesse em outras linguagens da JVM como Scala e Clojure. Experiência avançada em PHP.
+Mais de 5 anos de experiência no desenvolvimento de sistemas web (desde a análise até produção). Experiência avançada em Java e PHP, Ruby e Node.js, intermediária em Scala e iniciante em Clojure. Confortável em equipes de alta performance e entrega rápida. Experiente no planejamento e gerenciamento de infraestrutura na nuvem, especialmente na AWS.
 
 Entusiasta do código aberto, pensamento crítico e user-centered.
 
-**Especialidade:** Desenvolvimento de aplicações corporativas em Java (EE), Scala, Ruby, PHP ou Node.js.  
-**Pretensão salarial:** R$ 3.000 a R$ 4.000 - negociável  
+**Especialidade:** Desenvolvimento de aplicações web em Java, Scala, Ruby, PHP ou Node.js.  
 **Local de trabalho:** Região Metropolitana de São Paulo (aceito viajar pela empresa)
 
 ## Objetivo profissional
