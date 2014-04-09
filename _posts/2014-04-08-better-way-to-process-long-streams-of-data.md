@@ -23,7 +23,7 @@ This one is something that applies when:
 
 Basically, I discarded the notion of a total, since it may not be consistent due to the concurrency issues mentioned above. From there, I just needed some way to figure out when to stop processing. So I just did this (pseudo-code):
 
-```
+{% highlight c %}
 done = false
 
 function getRecords( startIndex, limit ) {
@@ -31,11 +31,11 @@ function getRecords( startIndex, limit ) {
   done = ( records.length < limit )
   return records
 }
-```
+{% endhighlight %}
 
 When I got less records than the limit, this means that I'm at the last "page" of the records. Setting a flag allows me to control whether to stop processing:
 
-```
+{% highlight c %}
 function processRecords() {
   limit = 100
   startIndex = 0
@@ -46,7 +46,7 @@ function processRecords() {
 }
 
 function process( records ) { /* code */ }
-```
+{% endhighlight %}
 
 In the case that the amount of records is divisible by the batch limit, we'll simply have an extra query that returns no results. E.g.: 1000 records using 100 as batch limit.
 
