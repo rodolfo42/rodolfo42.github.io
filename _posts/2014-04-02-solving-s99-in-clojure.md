@@ -1,6 +1,7 @@
 ---
 layout: post
 comments: true
+published: true
 ---
 
 I found myself a question while solving some [S99](http://aperiodic.net/phil/scala/s-99/) problems in Clojure.
@@ -9,15 +10,15 @@ I found myself a question while solving some [S99](http://aperiodic.net/phil/sca
 
 For the `lngth` function, which one is more idiomatic and easy on the eyes?
 
-```clojure
+{% highlight clojure %}
 (defn lngth [lst] (reduce (fn [a b] (inc a)) 0 lst))
-```
+{% endhighlight %}
 
 or
 
-```clojure
+{% highlight clojure %}
 (defn lngth [lst] (reduce #(inc (first %&)) 0 lst))
-```
+{% endhighlight %}
 
 ?
 
