@@ -23,11 +23,9 @@ This one is something that applies when:
 
 Basically, I discarded the notion of a total, since it may not be consistent due to the concurrency issues mentioned above. From there, I just needed some way to figure out when to stop processing. So I just did this (pseudo-code):
 
-{% highlight c %}
+{% highlight javascript %}
 done = false
-{% endhighlight %}
 
-{% highlight c %}
 function getRecords( startIndex, limit ) {
   records = db.select( startIndex, limit )
   done = ( records.length < limit )
@@ -37,7 +35,7 @@ function getRecords( startIndex, limit ) {
 
 When I got less records than the limit, this means that I'm at the last "page" of the records. Setting a flag allows me to control whether to stop processing:
 
-{% highlight c %}
+{% highlight javascript %}
 function processRecords() {
   limit = 100
   startIndex = 0
