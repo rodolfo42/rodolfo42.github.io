@@ -40,6 +40,10 @@ body {
 	padding: 40px;
 }
 
+.read-more {
+  	overflow: hidden;
+}
+
 a.read-more-link {
     float: right;
     display: block;
