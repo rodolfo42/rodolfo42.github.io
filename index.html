@@ -17,7 +17,9 @@ published: true
     <div class="post-content">
       {% if post.content contains "<!-- more -->" %}
         {{ post.content | split:"<!-- more -->" | first % }}
-        <a class="read-more" href="{{ post.url }}">read more</a>
+        <div class="read-more">
+          <a class="read-more-link" href="{{ post.url }}">read more</a>
+        </div>
       {% else %}
         {{ post.content }}
       {% endif %}
