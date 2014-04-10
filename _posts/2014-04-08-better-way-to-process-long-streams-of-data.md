@@ -18,7 +18,7 @@ I was almost doing that for a task today, and then I realized I could do somethi
 
 ### Improving
 
-Basically, I discarded the notion of a total, since it may not be consistent due to the concurrency issues mentioned above. From there, I just needed some way to figure out when to stop processing.
+Basically, I discarded the notion of a total, since it may not be consistent due to concurrency issues. From there, I just needed some way to figure out when to stop processing.
 
 This is something that applies when:
 
