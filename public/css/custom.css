@@ -41,7 +41,12 @@ body {
 }
 
 a.read-more-link {
-	color: #999;
+	float: right;
+    display: block;
+    padding: 5px 10px;
+    background-color: #90A959;
+    border-radius: 10px;
+    color: #FFF;
 }
 
 a.read-more-link:after {
