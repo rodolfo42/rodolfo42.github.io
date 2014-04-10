@@ -26,6 +26,10 @@ body {
 	margin: 0 auto;
 }
 
+.page, .post {
+  margin-bottom: 2em;
+}
+
 .post-content {
   text-align: justify;
 }
