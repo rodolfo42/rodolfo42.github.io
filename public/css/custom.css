@@ -2,14 +2,9 @@ body {
   background-color: #FDFDFD;
 }
 
-.masthead-title a {
-    color: #777;
-    font-size: 4ex;
-}
-
 .masthead-title small {
     float: right;
-    line-height: 4em;
+    line-height: 1.6em;
 }
 
 .sidebar {
