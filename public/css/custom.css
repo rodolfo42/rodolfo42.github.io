@@ -2,6 +2,11 @@ body {
   background-color: #FDFDFD;
 }
 
+.masthead-title small {
+    float: right;
+    line-height: 1.6em;
+}
+
 .sidebar {
 	opacity: 0.9;
 }
