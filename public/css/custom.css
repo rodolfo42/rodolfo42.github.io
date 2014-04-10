@@ -41,12 +41,18 @@ body {
 }
 
 a.read-more-link {
-	float: right;
+    float: right;
     display: block;
     padding: 5px 10px;
-    background-color: #90A959;
+    background-color: #303030;
     border-radius: 10px;
     color: #FFF;
+    font-size: 80%;
+}
+
+a.read-more-link:hover {
+    background-color: #515151;
+    text-decoration: none;
 }
 
 a.read-more-link:after {
