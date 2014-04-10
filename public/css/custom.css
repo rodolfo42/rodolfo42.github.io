@@ -40,11 +40,11 @@ body {
 	padding: 40px;
 }
 
-a.read-more {
+a.read-more-link {
 	color: #999;
 }
 
-a.read-more:after {
+a.read-more-link:after {
 	content: ' \00BB';
 }
 
