@@ -68,6 +68,10 @@ a.read-more-link:after {
 	content: ' \00BB';
 }
 
+.related * {
+font-size: 22px;
+}
+
 .post-date {
 	color: #CCC;
 }
