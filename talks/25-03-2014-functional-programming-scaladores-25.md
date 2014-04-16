@@ -1,7 +1,9 @@
 ---
 title: Talk on functional programming with Scala at 25th Scaladores meeting
-date: 25-03-2014
+date: "25-03-2014"
 type: talk
+published: true
+layout: talk
 ---
 
 Talk in Portuguese, introducing some key concepts of Scala and functional programming to around 50 Java developers. This event was hosted in a company called *Eicon Controles* which had recently migrated their main product to the Scala stack using Play.
