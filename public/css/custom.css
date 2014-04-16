@@ -78,16 +78,16 @@ a.read-more-link:after {
     display: block;
     text-align: right;
     margin-top: -.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: .5rem;
 }
 
 .post-date, .talk-date {
 	color: #CCC;
 	display: block;
 	margin-top: -.5rem;
+  	margin-bottom: 1rem;
 }
 
 .talk-date {
 	text-align: right;
-  	margin-bottom: .5rem;
 }
