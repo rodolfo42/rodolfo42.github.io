@@ -3,11 +3,11 @@ layout: page
 published: true
 ---
 
-
-
-  <span class="post-date">{{ page.date | date_to_string }}</span>
-  <a class="/talks.html">&laquo; Back to Talks</a>
-  <br><br>
-  <div class="post-content">
+<span class="post-date">{{ page.date | date_to_string }}</span>
+<a class="/talks.html">&laquo; Back to Talks</a>
+<br><br>
+<div class="post-content">
   {{ content }}
-  </div>
+</div>
+  
+{% include disqus.html %}
