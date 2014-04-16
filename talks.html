@@ -1,6 +1,7 @@
 ---
 title: Talks
 layout: page
+published: true
 ---
 
 <p>Here's a list of talks I gave:</p>
@@ -8,7 +9,7 @@ layout: page
 {% assign pages_list = site.pages %}
 {% for node in pages_list %}
 	{% if node.title != null %}
-    	{% if node.type == null %}
+    	{% if node.type != null %}
 			{% if node.type == "talk" %}
         	<p>
         		<strong class="talk-date">{{ node.date | date: '%B %d, %Y' }}</strong>: 
