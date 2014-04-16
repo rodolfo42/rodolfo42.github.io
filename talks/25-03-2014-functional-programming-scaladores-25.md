@@ -1,8 +1,10 @@
 ---
-title: Talk on functional programming with Scala at 25th Scaladores meeting
-date: 25-03-2014
+title: Talk on functional design patterns with Scala
+date: "25-03-2014"
 layout: talk
 comments: true
+published: true
+location: "25th Scaladores Meeting - Eicon Controles"
 ---
 
 Talk in Portuguese, introducing some key concepts of Scala and functional programming to around 50 Java developers.
