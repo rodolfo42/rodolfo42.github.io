@@ -10,7 +10,7 @@ Talk in Portuguese, introducing some key concepts of Scala and functional progra
 
 ---------------------------------------
 
-<iframe src="//player.vimeo.com/video/90242696" width="500" height="200" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe src="//player.vimeo.com/video/90242696" width="720" height="560" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 ---------------------------------------
 
