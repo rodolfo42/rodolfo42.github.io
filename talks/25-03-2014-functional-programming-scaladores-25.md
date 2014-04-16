@@ -4,9 +4,12 @@ date: "25-03-2014"
 type: talk
 published: true
 layout: talk
+comments: true
 ---
 
-Talk in Portuguese, introducing some key concepts of Scala and functional programming to around 50 Java developers. This event was hosted in a company called *Eicon Controles* which had recently migrated their main product to the Scala stack using Play.
+Talk in Portuguese, introducing some key concepts of Scala and functional programming to around 50 Java developers.
+
+This event was hosted in a company called *Eicon Controles* which had recently migrated their main product to the Scala stack using Play.
 
 ---------------------------------------
 
