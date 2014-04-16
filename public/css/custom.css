@@ -85,9 +85,9 @@ a.read-more-link:after {
 	color: #CCC;
 	display: block;
 	margin-top: -.5rem;
-	margin-bottom: 1rem;
 }
 
 .talk-date {
 	text-align: right;
+  	margin-bottom: .5rem;
 }
