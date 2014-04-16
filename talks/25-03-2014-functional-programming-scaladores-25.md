@@ -1,8 +1,6 @@
 ---
 title: Talk on functional programming with Scala at 25th Scaladores meeting
-date: "25-03-2014"
-type: talk
-published: true
+date: 25-03-2014
 layout: talk
 comments: true
 ---
