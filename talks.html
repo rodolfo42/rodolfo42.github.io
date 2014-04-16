@@ -11,13 +11,13 @@ published: true
 	{% if node.title != null %}
     	{% if node.layout != null %}
 			{% if node.layout == "talk" %}
-        	<p>
+        	<div class="talk">
               	<h4 class="post-title">
         	        <a href="{{ node.url }}">{{ node.title }}</a>
 				</h4>
 				<span class="talk-location">{{ node.location }}</span>
-            	<span class="post-date">{{ node.date | date: '%B %d, %Y' }}</span>
-        	</p>
+            	<span class="talk-date">{{ node.date | date: '%B %d, %Y' }}</span>
+        	</div>
         	{% endif %}
 		{% endif %}
 	{% endif %}
