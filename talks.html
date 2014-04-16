@@ -12,10 +12,11 @@ published: true
     	{% if node.layout != null %}
 			{% if node.layout == "talk" %}
         	<p>
-              	<h3 class="post-title">
+              	<h4 class="post-title">
         	        <a href="{{ node.url }}">{{ node.title }}</a>
-				</h3>
-            	<span class="talk-date">{{ node.date | date: '%B %d, %Y' }}</span>
+				</h4>
+				<span class="talk-location">{{ node.location }}</span>
+            	<span class="post-date">{{ node.date | date: '%B %d, %Y' }}</span>
         	</p>
         	{% endif %}
 		{% endif %}
