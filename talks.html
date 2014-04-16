@@ -13,7 +13,7 @@ published: true
 			{% if node.layout == "talk" %}
         	<p>
         		<a class="talk-link" href="{{ node.url }}">{{ node.title }}</a>
-            	<span class="post-date">{{ node.date | date: '%B %d, %Y' }}</span>
+            	<small class="talk-date">{{ node.date | date: '%B %d, %Y' }}</small>
         	</p>
         	{% endif %}
 		{% endif %}
