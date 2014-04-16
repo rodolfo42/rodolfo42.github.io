@@ -69,9 +69,25 @@ a.read-more-link:after {
 }
 
 .related * {
-font-size: 22px;
+	font-size: 22px;
 }
 
-.post-date {
+.talk-location {
+    color: rgb(102, 102, 102);
+    font-style: italic;
+    display: block;
+    text-align: right;
+    margin-top: -.5rem;
+    margin-bottom: 1rem;
+}
+
+.post-date, .talk-date {
 	color: #CCC;
+	display: block;
+	margin-top: -.5rem;
+	margin-bottom: 1rem;
+}
+
+.talk-date {
+	text-align: right;
 }
