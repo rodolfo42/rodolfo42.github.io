@@ -15,20 +15,20 @@ Firstly, a palindrome number is one that reads both ways:
 
 {% highlight scala %}
 def pal(a: Int): Boolean =
-	a.toString == a.toString.reverse
+  a.toString == a.toString.reverse
 {% endhighlight %}
 
 Then use a sequence comprehension to find all the palindrome products, filtering by the ´pal´ function:
 
 {% highlight scala %}
 def greatestPal(from: Int, until: Int): Int = {
-	lazy val pals = for {
-		x <- start to end
-		y <- start to end
-		if pal(x * y)
-	} yield x * y
+  lazy val pals = for {
+    x <- start to end
+    y <- start to end
+    if pal(x * y)
+  } yield x * y
 
-	pals.max
+  pals.max
 }
 {% endhighlight %}
 
