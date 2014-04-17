@@ -9,6 +9,8 @@ While working through some [projecteuler.net](http://projecteuler.net/) problems
 
 The problem was to *compute the largest palindrome number that is a product of two numbers consisting of three algarisms each*.
 
+<!-- more -->
+
 Firstly, a palindrome number is one that reads both ways:
 
 {% highlight scala %}
