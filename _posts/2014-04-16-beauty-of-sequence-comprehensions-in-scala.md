@@ -18,7 +18,7 @@ def pal(a: Int): Boolean =
   a.toString == a.toString.reverse
 {% endhighlight %}
 
-Then use a sequence comprehension to find all the palindrome products, filtering by the ´pal´ function:
+Then use a sequence comprehension to find all the palindrome products, filtering by the `pal` function:
 
 {% highlight scala %}
 def greatestPal(from: Int, until: Int): Int = {
