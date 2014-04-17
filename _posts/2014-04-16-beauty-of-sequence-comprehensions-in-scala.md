@@ -43,4 +43,4 @@ greatestPal(100, 999)
 
 See it in action [here](http://ideone.com/fcJTo5).
 
-> This could be optimized of course. That's just the tip of the iceberg.
+> This could be optimized, of course. That's just the tip of the iceberg.
