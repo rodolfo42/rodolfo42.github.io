@@ -38,6 +38,7 @@ And then you can get to the answer to this particular problem like this:
 
 {% highlight scala %}
 greatestPal(100, 999)
+
 // 906609
 {% endhighlight %}
 
