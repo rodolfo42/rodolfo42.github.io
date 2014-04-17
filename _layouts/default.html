@@ -31,7 +31,7 @@
     <script type="text/javascript">
       $(document).on('mousedown', 'a', function(e) {
         if(($(this).attr('target') == '' || $(this).attr('target') != '_blank') && !new RegExp('/' + window.location.host + '/').test(this.href)) {
-          $(this).attr('target', '_blank').click(); 
+          $(this).attr('target', '_blank'); 
         }
       });
     </script>
