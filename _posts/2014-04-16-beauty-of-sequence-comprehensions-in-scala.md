@@ -7,9 +7,11 @@ comments: true
 
 While working through some [projecteuler.net](http://projecteuler.net/) problems, I've found a quite nice solution to a problem using Scala's sequence comprehensions.
 
-The problem was to *compute the largest palindrome number that is a product of two numbers consisting of three algarisms each*.
+The problem was:
 
-<!-- more -->
+> A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99.
+> 
+> Find the largest palindrome made from the product of two 3-digit numbers.
 
 Firstly, a palindrome number is one that reads both ways:
 
@@ -18,10 +20,12 @@ def pal(a: Int): Boolean =
   a.toString == a.toString.reverse
 {% endhighlight %}
 
+<!-- more -->
+
 Then use a sequence comprehension to find all the palindrome products, filtering by the `pal` function:
 
 {% highlight scala %}
-def greatestPal(from: Int, until: Int): Int = {
+def greatestPal(start: Int, end: Int): Int = {
   lazy val pals = for {
     x <- start to end
     y <- start to end
