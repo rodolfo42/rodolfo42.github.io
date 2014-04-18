@@ -7,7 +7,7 @@ comments: true
 
 While working through some [projecteuler.net](http://projecteuler.net/) problems, I've found a quite nice solution to a problem using Scala's sequence comprehensions.
 
-The problem was:
+The problem is [this one](https://projecteuler.net/problem=4):
 
 > A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99.
 > 
