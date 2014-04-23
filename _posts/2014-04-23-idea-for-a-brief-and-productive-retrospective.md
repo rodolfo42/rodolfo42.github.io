@@ -1,10 +1,7 @@
 ---
-published: false
----
-
----
 layout: post
 comments: true
+published: true
 ---
 
 I work at a small dev team (~8), that is part of a bigger dev team (~35). We were undergoing a period where we were having some trouble planning our next sprint, and also we wanted to look at ways to better our productivity even more, compared to other teams.
