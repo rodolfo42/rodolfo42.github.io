@@ -1,4 +1,7 @@
-## Why Yahoo isn't Google
+---
+layout: post
+title: Why Yahoo isn't Google
+---
 
 Actually, Yahoo isn't Google because it just isn't. But the title is here just to draw your attention :D
 
