@@ -12,20 +12,20 @@ At the Yahoo login page, I was surprised to see I could actually login into Yaho
 
 Ok, so I figured I could just head over to yahoo.com, login and change this info. This was actually MUCH tougher than it sounds. After logging into yahoo.com, I clicked the "Hi, Rodolfo" link at the top, as to edit my personal info to that account. It so happens I was kindly invited to create a Yahoo "Whatever" Profile so I can edit the very info just I filled TWO MINUTES ago. Not to mention that this is done as if there were not enough social networks profiles engines out there - I mean, who do you know uses Yahoo! Profiles in an regular basis??
 
-![/images/profile.png]
+!(Yahoo! Profile)[/images/profile.png]
 
 So I just accepted the thing and searched again for what I wanted, to edit my info - I just hate it when apps make me do something twice just because "it's different systems"
 
-![/images/edit.png]
+!(Edit profile)[/images/edit.png]
 
 But to my surprise, all I see in the Date of birth field is: NOTHING! Yeah, total 
 blank space.
 
-![/images/dob.png]
+!(Date of birth)[/images/dob.png]
 
 Being the web developer I am, I automatically fired up Chrome DevTools and saw that there were actually three hidden fields for each date component.
 
-![/images/devtools.png]
+!(Chrome DevTools)[/images/devtools.png]
 
 So I just edited the fields manually (entering numbers for each input value corresponding to my birthdate), and clicked Save. I'm glad it worked, or else I would just recommend against using Flickr or anything that is Yahoo's and write this blog post, but I'm just doing the latter.
 
