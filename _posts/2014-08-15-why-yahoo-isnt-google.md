@@ -25,7 +25,7 @@ blank space.
 
 Being the web developer I am, I automatically fired up Chrome DevTools and saw that there were actually three hidden fields for each date component.
 
-!(Chrome DevTools)[/images/devtools.png]
+![Chrome DevTools](/images/devtools.png)
 
 So I just edited the fields manually (entering numbers for each input value corresponding to my birthdate), and clicked Save. I'm glad it worked, or else I would just recommend against using Flickr or anything that is Yahoo's and write this blog post, but I'm just doing the latter.
 
