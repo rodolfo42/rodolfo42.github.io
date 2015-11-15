@@ -5,7 +5,7 @@ safe:             true
 lsi:              false
 
 # Permalinks
-permalink:        pretty
+permalink:        /posts/:title.html
 
 # Setup
 title:            'Rodolfo Ferreira'
