@@ -13,7 +13,6 @@ published: true
       </a>
     </h1>
 
-    <span class="post-date">{{ post.date | date_to_string }}</span>
     <div class="post-content">
       {% if post.content contains "<!-- more -->" %}
         {{ post.content | split:"<!-- more -->" | first % }}
