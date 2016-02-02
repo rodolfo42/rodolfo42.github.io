@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Why Yahoo sucks
-published: true
+published: false
 ---
 
 Recently, I've tried to create a Flickr account, and they require me to create a Yahoo account. At the Yahoo login page, I was surprised to see I could actually login into Yahoo with my Google account. So I gave it a try and, as expected, my e-mail wasn't recognized, but it's all good, I just filled all the information to sign up, and everything was alright until I was redirected to a Flickr page saying I could only share photos if I was 13 or older. Then I realized: I got distracted and entered 2014 as my birthyear.
